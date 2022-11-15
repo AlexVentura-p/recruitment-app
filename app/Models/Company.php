@@ -10,4 +10,9 @@ class Company extends Model
     use HasFactory;
     public $timestamps = false;
     public $guarded = [];
+
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
 }

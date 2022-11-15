@@ -15,7 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        //
+        return response(Company::paginate(10));
     }
 
     /**
@@ -40,34 +40,40 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Company $company)
     {
-        //
+        return response($company);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Company $company)
     {
-        //
+        $attributes = $request->validate([
+            'name' => ['required'],
+            'description' => ['required']
+        ]);
+
+        $company->update($attributes);
+
+        return response($company);
+
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
+     * @param Company $company
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Company $company)
     {
-        //
+        $company->delete();
+        return response('No content', 204);
     }
 }
