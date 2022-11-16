@@ -15,7 +15,7 @@ class JobOpeningController extends Controller
      */
     public function index()
     {
-        //
+        return response(JobOpening::paginated(10));
     }
 
     /**
@@ -54,22 +54,32 @@ class JobOpeningController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  JobOpening $jobOpening
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,JobOpening $jobOpening)
     {
-        //
+        $attributes = $request->validate([
+            'company_id' => ['required'],
+            'position' => ['required'],
+            'description' => ['required'],
+            'deadline' => ['required']
+        ]);
+
+        $jobOpening->update($attributes);
+
+        return response($jobOpening);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  JobOpening $jobOpening
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(JobOpening $jobOpening)
     {
-        //
+        $jobOpening->delete();
+        return response('No content',204);
     }
 }
