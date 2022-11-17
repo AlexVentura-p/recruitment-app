@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
@@ -26,8 +27,9 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+
         $attributes = $request->validate([
-            'name' => ['required'],
+            'name' => ['required',Rule::unique('companies','name')],
             'description' => ['required']
         ]);
 

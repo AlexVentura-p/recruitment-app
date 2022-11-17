@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\JobOpeningController;
 use Illuminate\Http\Request;
@@ -20,5 +21,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('admin/companies',CompanyController::class);
+Route::middleware('auth:api')->group(function (){
+    Route::apiResource('admin/companies',CompanyController::class);
+});
+
 Route::apiResource('admin/job-openings',JobOpeningController::class);
+
+
+Route::post('admin/register',[RegisterController::class,'admin']);
+Route::post('company-admin/register',[RegisterController::class,'company']);
+
+Route::post('admin/login',[RegisterController::class,'login']);
