@@ -23,9 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->group(function (){
     Route::apiResource('admin/companies',CompanyController::class);
+    Route::apiResource('admin/job-openings',JobOpeningController::class);
 });
 
-Route::apiResource('admin/job-openings',JobOpeningController::class);
+Route::get('job-openings',[JobOpeningController::class,'index']);
 
 
 Route::post('admin/register',[RegisterController::class,'admin']);
