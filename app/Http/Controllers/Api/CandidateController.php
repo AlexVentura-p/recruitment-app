@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\JobApplication;
+use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class JobApplicationController extends Controller
+class CandidateController extends Controller
 {
 
     public function index()
     {
-        return response(JobApplication::all());
+        return response(Candidate::all());
     }
 
     public function store(Request $request)
@@ -26,7 +26,12 @@ class JobApplicationController extends Controller
             ['user_id' => auth()->user()->getAttribute('id')]
         );
 
-        return JobApplication::create($attributes);
+        return Candidate::create($attributes);
+    }
+
+    public function show(Candidate $candidate)
+    {
+        return response($candidate);
     }
 
 }
