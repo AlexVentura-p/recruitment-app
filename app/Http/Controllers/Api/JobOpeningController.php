@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\JobOpening;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class JobOpeningController extends Controller
 {
@@ -15,7 +17,7 @@ class JobOpeningController extends Controller
      */
     public function index()
     {
-        return response(JobOpening::paginated(10));
+        return response(JobOpening::paginate(10));
     }
 
     /**
@@ -27,14 +29,21 @@ class JobOpeningController extends Controller
     public function store(Request $request)
     {
         $attributes = $request->validate([
-            'company_id' => ['required'],
+            'company_name' => ['required',Rule::exists('companies','name')],
             'position' => ['required'],
             'description' => ['required'],
             'deadline' => ['required']
         ]);
 
+        $company = Company::where('name','=',$attributes['company_name'])->first();
+
         return response(
-            JobOpening::create($attributes),
+            JobOpening::create([
+                'company_id' => $company->id,
+                'position' => $attributes['position'],
+                'description' => $attributes['description'],
+                'deadline' => $attributes['deadline']
+            ]),
             201
         );
     }
