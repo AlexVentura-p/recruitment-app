@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateApplicationsTable extends Migration
+class CreateJobApplicationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateApplicationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('job_applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_opening_id')->nullable()
                 ->constrained('job_openings')->onDelete('SET NULL');
@@ -34,6 +34,6 @@ class CreateApplicationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('job_applications');
     }
 }

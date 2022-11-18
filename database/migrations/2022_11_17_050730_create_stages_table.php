@@ -16,8 +16,9 @@ class CreateStagesTable extends Migration
         Schema::create('stages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('company_id');
-            $table->unique(['name','company_id','stage_number']);
+            $table->foreignId('company_id')
+                ->constrained('companies')->onDelete('CASCADE');
+            $table->unique(['name','company_id']);
         });
     }
 
