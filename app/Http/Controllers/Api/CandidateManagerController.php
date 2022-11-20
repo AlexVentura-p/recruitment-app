@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CandidateResource;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,21 +15,21 @@ class CandidateManagerController extends Controller
     {
         $candidate->accept();
         $candidate->update();
-        return response($candidate);
+        return CandidateResource::make($candidate);
     }
 
     public function reject(Candidate $candidate)
     {
         $candidate->reject();
         $candidate->update();
-        return response($candidate);
+        return CandidateResource::make($candidate);
     }
 
     public function hire(Candidate $candidate)
     {
         $candidate->hire();
         $candidate->update();
-        return response($candidate);
+        return CandidateResource::make($candidate);
     }
 
     public function changeStage(Request $request)
@@ -43,7 +44,7 @@ class CandidateManagerController extends Controller
 
         $candidate->setStage($attributes['stage'],$attributes['company_id']);
 
-        return response($candidate);
+        return CandidateResource::make($candidate);
     }
 
     public function showStatus(Candidate $candidate)

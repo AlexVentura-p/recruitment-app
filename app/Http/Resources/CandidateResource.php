@@ -15,6 +15,10 @@ class CandidateResource extends JsonResource
     public function toArray($request)
     {
         $user = $this->user;
+        $stage = $this->stage;
+        if($stage != null){
+            $stage = $stage->name;
+        }
 
         return [
             'id' => $this->id,
@@ -23,7 +27,7 @@ class CandidateResource extends JsonResource
             'user id' => $user->id,
             'user first name' => $user->first_name,
             'user last name' => $user->last_name,
-            'stage' => $this->stage->name,
+            'stage' => $stage,
             'status' => $this->status
         ];
     }
