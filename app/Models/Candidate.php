@@ -5,6 +5,7 @@ namespace App\Models;
 use http\Exception\InvalidArgumentException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Candidate extends Model
 {
@@ -41,5 +42,19 @@ class Candidate extends Model
         throw new InvalidArgumentException('Unregistered stage');
     }
 
+    public function job_opening() : BelongsTo
+    {
+        return $this->belongsTo(JobOpening::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function stage()
+    {
+        return $this->belongsTo(Stage::class);
+    }
 
 }
