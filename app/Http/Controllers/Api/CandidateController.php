@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Candidate\StoreCandidateRequest;
 use App\Http\Resources\CandidateCollection;
 use App\Http\Resources\CandidateResource;
 use App\Models\Candidate;
@@ -19,21 +20,10 @@ class CandidateController extends Controller
         );
     }
 
-    public function store(Request $request)
+    public function store(StoreCandidateRequest $request)
     {
-        $userId = ['user_id' => auth()->user()->getAttribute('id')];
 
-        $attributes = $request->validate([
-            'job_opening_id' => [
-                'required',
-                Rule::exists('job_openings', 'id'),
-                'unique:candidates,job_opening_id,NULL,NULL,user_id,' . $userId['user_id']]
-        ]);
-
-        $attributes = array_merge(
-            $attributes,
-            $userId
-        );
+        $attributes = $request->validated();
 
         return CandidateResource::make(
             Candidate::create($attributes)

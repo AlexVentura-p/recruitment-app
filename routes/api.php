@@ -28,9 +28,6 @@ Route::middleware('auth:api')->group(function (){
     Route::apiResource('admin/companies',CompanyController::class);
     Route::apiResource('admin/job-openings',JobOpeningController::class);
     Route::apiResource('candidates',CandidateController::class);
-    //Route::post('job-applications',[CandidateController::class,'store']);
-    //Route::get('job-applications',[CandidateController::class,'index']);
-    //Route::get('candidate/{candidate}',[CandidateController::class,'show']);
     Route::post('stages',[StagesController::class,'store']);
     Route::get('stages',[StagesController::class,'index']);
     Route::patch('job-applications/accept/{candidate}',[CandidateManagerController::class,'accept']);

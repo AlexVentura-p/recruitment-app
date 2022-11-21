@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Company\StoreCompanyRequest;
+use App\Http\Requests\Company\UpdateCompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -22,21 +24,17 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCompanyRequest $request)
     {
-
-        $attributes = $request->validate([
-            'name' => ['required',Rule::unique('companies','name')],
-            'description' => ['required']
-        ]);
+        $attributes = $request->validated();
 
         $company = Company::create($attributes);
 
 
-        return response($company,201);
+        return response($company, 201);
     }
 
     /**
@@ -52,20 +50,16 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $attributes = $request->validate([
-            'name' => ['required'],
-            'description' => ['required']
-        ]);
+        $attributes = $request->validated();
 
         $company->update($attributes);
 
         return response($company);
-
     }
 
     /**

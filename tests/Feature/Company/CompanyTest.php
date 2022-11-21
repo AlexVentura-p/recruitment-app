@@ -1,10 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Company;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class CompanyTest extends TestCase
@@ -37,6 +39,7 @@ class CompanyTest extends TestCase
     public function test_company_is_deleted()
     {
 
+        Passport::actingAs(User::factory()->create());
         $company = Company::factory()->create();
 
         $this->deleteJson('api/admin/companies/'.$company->name);
@@ -48,22 +51,28 @@ class CompanyTest extends TestCase
 
     public function test_company_is_updated()
     {
+        Passport::actingAs(User::factory()->create());
+
         $company = Company::factory()->create([
-            'name' => 'original'
+            'name' => 'original',
+            'description' => 'des1'
         ]);
         $newAttributes = [
-            'name' => $this->faker->name,
-            'description' => $this->faker->sentence
+            'name' => 'modified',
+            'description' => 'des2'
         ];
 
-        $this->putJson('api/admin/companies/'.$company->name,
+        $response = $this->putJson('api/admin/companies/'.$company->name,
             $newAttributes
         );
-        $updatedProduct = Company::find($company->id);
+
+        dd($response);
+
+        $updatedCompany = Company::find($company->id)->first();
 
         $this->assertEquals(
-            $updatedProduct->name,
-            $newAttributes['name']
+            $newAttributes['name'],
+            $updatedCompany->name
         );
 
     }
