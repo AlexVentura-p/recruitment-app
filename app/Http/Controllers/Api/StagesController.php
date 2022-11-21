@@ -15,12 +15,16 @@ class StagesController extends Controller
      */
     public function index()
     {
+        request()->validate([
+            'company_id' => ['required']
+        ]);
+
         return response(
             Stage::all()
                 ->where(
                     'company_id',
                     '=',
-                    auth()->user()->company_id
+                    request('company_id')
                 )
         );
     }

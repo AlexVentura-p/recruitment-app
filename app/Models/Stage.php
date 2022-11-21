@@ -12,4 +12,9 @@ class Stage extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function candidate()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }

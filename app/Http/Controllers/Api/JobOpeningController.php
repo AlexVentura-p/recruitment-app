@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\JobOpeningCollection;
+use App\Http\Resources\JobOpeningResource;
 use App\Models\Company;
 use App\Models\JobOpening;
 use Illuminate\Http\Request;
@@ -17,7 +19,9 @@ class JobOpeningController extends Controller
      */
     public function index()
     {
-        return response(JobOpening::paginate(10));
+        return JobOpeningCollection::make(
+            JobOpening::paginate(10)
+        );
     }
 
     /**
@@ -56,7 +60,7 @@ class JobOpeningController extends Controller
      */
     public function show(JobOpening $jobOpening)
     {
-        return response($jobOpening);
+        return JobOpeningResource::make($jobOpening);
     }
 
     /**
@@ -77,7 +81,7 @@ class JobOpeningController extends Controller
 
         $jobOpening->update($attributes);
 
-        return response($jobOpening);
+        return JobOpeningResource::make($jobOpening);
     }
 
     /**

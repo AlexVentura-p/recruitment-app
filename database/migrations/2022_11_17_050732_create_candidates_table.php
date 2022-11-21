@@ -15,8 +15,8 @@ class CreateCandidatesTable extends Migration
     {
         Schema::create('candidates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_opening_id')->nullable()
-                ->constrained('job_openings')->onDelete('SET NULL');
+            $table->foreignId('job_opening_id')
+                ->constrained('job_openings')->onDelete('CASCADE');
             $table->foreignId('user_id')
                 ->constrained('users')->onDelete('CASCADE');
             $table->foreignId('stage_id')->nullable()
