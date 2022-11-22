@@ -21,8 +21,7 @@ class JobOpeningResource extends JsonResource
             'company name' => $this->company->name,
             'position'  => $this->position,
             'description' => $this->description,
-            'deadline'  => $this->deadline,
-            'status'    => $this->status
+            'deadline'  => $this->deadline
         ];
     }
 }

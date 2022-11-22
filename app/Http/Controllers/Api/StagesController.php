@@ -3,11 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\Auth\AuthCompanyModification;
+use App\Http\Services\Auth\ChangeValidator;
+use App\Models\Company;
 use App\Models\Stage;
 use Illuminate\Http\Request;
 
 class StagesController extends Controller
 {
+    private ChangeValidator $changeValidator;
+
+    public function __construct()
+    {
+        $this->changeValidator = new AuthCompanyModification();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,9 +24,15 @@ class StagesController extends Controller
      */
     public function index()
     {
-        request()->validate([
+        $attributes = request()->validate([
             'company_id' => ['required']
         ]);
+
+        $company = Company::find($attributes['company_id'])->first();
+
+        if(!$this->changeValidator->validate($company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
 
         return response(
             Stage::all()
@@ -42,20 +57,15 @@ class StagesController extends Controller
             'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
         ]);
 
+        $company = Company::find($attributes['company_id'])->first();
+
+        if(!$this->changeValidator->validate($company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
         return response(
             Stage::create($attributes)
         );
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -80,4 +90,5 @@ class StagesController extends Controller
     {
         //
     }
+
 }

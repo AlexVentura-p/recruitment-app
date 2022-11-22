@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JobOpening\StoreJobOpeningRequest;
+use App\Http\Requests\JobOpening\UpdateJobOpeningRequest;
 use App\Http\Resources\JobOpeningCollection;
 use App\Http\Resources\JobOpeningResource;
+use App\Http\Services\Auth\AuthCompanyModification;
+use App\Http\Services\Auth\ChangeValidator;
 use App\Models\Company;
 use App\Models\JobOpening;
 use Illuminate\Http\Request;
@@ -12,13 +16,32 @@ use Illuminate\Validation\Rule;
 
 class JobOpeningController extends Controller
 {
+    private ChangeValidator $changeValidator;
+
+    public function __construct()
+    {
+        $this->changeValidator = new AuthCompanyModification();
+    }
     /**
-     * Display a listing of the resource.
+     * Display a listing of company by name.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $attributes = $request->validate([
+            'company_name' => ['nullable',Rule::exists('companies','name')]
+        ]);
+
+        if ($attributes['company_name'] ?? false){
+
+            $company = Company::where('name','=',$attributes['company_name'])->first();
+            return JobOpeningCollection::make(
+                JobOpening::where('company_id','=',$company->id)->paginate(10)
+            );
+
+        }
+
         return JobOpeningCollection::make(
             JobOpening::paginate(10)
         );
@@ -30,16 +53,15 @@ class JobOpeningController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreJobOpeningRequest $request)
     {
-        $attributes = $request->validate([
-            'company_name' => ['required',Rule::exists('companies','name')],
-            'position' => ['required'],
-            'description' => ['required'],
-            'deadline' => ['required']
-        ]);
+        $attributes = $request->validated();
 
         $company = Company::where('name','=',$attributes['company_name'])->first();
+
+        if(!$this->changeValidator->validate($company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
 
         return response(
             JobOpening::create([
@@ -70,14 +92,18 @@ class JobOpeningController extends Controller
      * @param  JobOpening $jobOpening
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,JobOpening $jobOpening)
+    public function update(UpdateJobOpeningRequest $request,JobOpening $jobOpening)
     {
-        $attributes = $request->validate([
-            'company_id' => ['required'],
-            'position' => ['required'],
-            'description' => ['required'],
-            'deadline' => ['required']
-        ]);
+
+        if(!$this->changeValidator->validate($jobOpening->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
+        $attributes = $request->validated();
+
+        if($attributes['company_id'] != $jobOpening->company->id){
+            return response(['message' => 'Forbidden'], 403);
+        }
 
         $jobOpening->update($attributes);
 
@@ -92,7 +118,12 @@ class JobOpeningController extends Controller
      */
     public function destroy(JobOpening $jobOpening)
     {
+        if(!$this->changeValidator->validate($jobOpening->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
         $jobOpening->delete();
         return response('No content',204);
     }
+
 }

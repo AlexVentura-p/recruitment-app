@@ -65,9 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
-        'admin' => \App\Http\Middleware\CheckIfApiAdmin::class,
-        'admin-company' => \App\Http\Middleware\CheckIfCompanyAdmin::class,
-        'recruiter' => \App\Http\Middleware\CheckIfRecruiter::class,
         'checkRole' => \App\Http\Middleware\CheckRole::class
     ];
 }

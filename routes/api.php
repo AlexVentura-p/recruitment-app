@@ -28,19 +28,24 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group
     Route::apiResource('admin/job-openings',JobOpeningController::class);
     Route::post('stages',[StagesController::class,'store']);
     Route::get('stages',[StagesController::class,'index']);
-    Route::apiResource('candidates',CandidateController::class)->except(['store']);
-    Route::patch('job-applications/accept/{candidate}',[CandidateManagerController::class,'accept']);
-    Route::patch('job-applications/reject/{candidate}',[CandidateManagerController::class,'reject']);
-    Route::patch('job-applications/hire/{candidate}',[CandidateManagerController::class,'hire']);
+    //Route::apiResource('candidates',CandidateController::class)->except(['store']);
+    Route::get('candidates',[CandidateController::class,'index']);
+    Route::get('candidates/{candidate}',[CandidateController::class,'show']);
+    Route::delete('candidates/{candidate}',[CandidateController::class,'destroy']);
+    Route::patch('candidates/accept/{candidate}',[CandidateManagerController::class,'accept']);
+    Route::patch('candidates/reject/{candidate}',[CandidateManagerController::class,'reject']);
+    Route::patch('candidates/hire/{candidate}',[CandidateManagerController::class,'hire']);
     Route::post('candidate/stage',[CandidateManagerController::class,'changeStage']);
     Route::get('candidate/status/{candidate}',[CandidateManagerController::class,'showStatus']);
+    Route::post('register',[RegisterController::class,'register']);
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate'])->group(function (){
-    Route::post('candidates',CandidateController::class);
+    Route::post('candidates',[CandidateController::class,'store']);
 });
 
+Route::get('job-openings/{job_opening}',[JobOpeningController::class,'show']);
 Route::get('job-openings',[JobOpeningController::class,'index']);
+Route::post('registerCandidate',[RegisterController::class,'registerCandidate']);
 
-Route::post('register',[RegisterController::class,'register']);
 Route::post('login',[RegisterController::class,'login']);

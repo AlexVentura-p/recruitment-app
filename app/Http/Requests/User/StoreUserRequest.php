@@ -31,7 +31,7 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:50', Rule::unique('users','email')],
             'password' => ['required', Rules\Password::defaults()],
             'role' => ['required',Rule::exists('roles','name')],
-            'company_id' => ['required_if:role,admin-company,recruiter']
+            'company_id' => ['required_if:role,admin-company,recruiter',Rule::exists('companies','id')]
         ];
     }
 }

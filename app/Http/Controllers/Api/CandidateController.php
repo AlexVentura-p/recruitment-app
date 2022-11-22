@@ -6,42 +6,74 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Candidate\StoreCandidateRequest;
 use App\Http\Resources\CandidateCollection;
 use App\Http\Resources\CandidateResource;
+use App\Http\Services\Auth\AuthCompanyModification;
+use App\Http\Services\Auth\ChangeValidator;
 use App\Models\Candidate;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\JobOpening;
 
 class CandidateController extends Controller
 {
+    private ChangeValidator $changeValidator;
+
+    public function __construct()
+    {
+        $this->changeValidator = new AuthCompanyModification();
+    }
 
     public function index()
     {
-        return CandidateCollection::make(
-            Candidate::paginate(10)
-        );
+        request()->validate([
+            'company_id' => ['required']
+        ]);
+
+        $jobOpenings = JobOpening::where('company_id','=',request('company_id'))
+            ->get('id');
+
+        if (auth()->user()->role->name == 'admin' ||
+            auth()->user()->company_id == request('company_id')) {
+            return CandidateCollection::make(
+                Candidate::whereIn('job_opening_id',$jobOpenings)
+                    ->paginate(10)
+            );
+        }
+
+        return response(['message' => 'Forbidden'], 403);
+
     }
 
     public function store(StoreCandidateRequest $request)
     {
-
         $attributes = $request->validated();
+        $user = auth()->user();
 
-        if (auth()->user()->company_id ?? false) {
-            if (auth()->user()->company_id != $attributes['company_id']) {
-                return response(['message' => 'Forbidden'], 403);
-            }
+        if ($user->role->name != 'candidate'){
+            return response(['message' => 'Applicant should have candidate user'], 403);
         }
 
         return CandidateResource::make(
-            Candidate::create($attributes)
+            Candidate::create([
+                'user_id' => $user->id,
+                'job_opening_id' => $attributes['job_opening_id']
+            ])
         );
     }
 
     public function show(Candidate $candidate)
     {
-        if (auth()->user()->company_id != $candidate->company_id) {
+        if(!$this->changeValidator->validate($candidate->job_opening->company)){
             return response(['message' => 'Forbidden'], 403);
         }
         return CandidateResource::make($candidate);
+    }
+
+    public function destroy(Candidate $candidate)
+    {
+        if(!$this->changeValidator->validate($candidate->job_opening->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
+        $candidate->delete();
+        return response('No content',204);
     }
 
 }

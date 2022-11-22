@@ -9,8 +9,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules;
 
 class RegisterController extends Controller
 {
@@ -42,13 +40,17 @@ class RegisterController extends Controller
             }
         }
 
+        return response(['message' => 'Forbidden'], 403);
+    }
+
+    public function registerCandidate(StoreUserRequest $request)
+    {
+        $attributes = $request->validated();
+
         if (request('role') == 'candidate') {
             $attributes['company_id'] = null;
-            $scopes = ['crud_recruiters','crud_candidates'];
-            return $this->store($attributes,$scopes);
+            return $this->store($attributes,[]);
         }
-
-        return response(['message' => 'Forbidden'], 403);
     }
 
 
