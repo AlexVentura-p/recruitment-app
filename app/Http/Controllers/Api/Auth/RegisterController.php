@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreUserRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,36 +15,57 @@ use Illuminate\Validation\Rules;
 class RegisterController extends Controller
 {
 
-    public function admin(Request $request)
+    public function register(StoreUserRequest $request)
     {
-        $attributes = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:50', Rule::unique('users','email')],
-            'password' => ['required', Rules\Password::defaults()],
-            'role' => ['required'],
-            'company_id' => ['nullable']
-        ]);
+        $attributes = $request->validated();
 
-        $role = Role::where('name','=',$attributes['role'])->first();
+        if (request('role') == 'admin') {
+            if (auth()->user()->role->name == 'admin') {
+                $attributes['company_id'] = null;
+                return $this->store($attributes,[]);
+            }
+        }
 
-        $user = User::create([
-            'first_name' => $attributes['first_name'],
-            'last_name' => $attributes['last_name'],
-            'email' => $attributes['email'],
-            'password' => Hash::make($attributes['password']),
-            'role_id' => $role->id,
-            'company_id' => $attributes['company_id']
-        ]);
+        if (request('role') == 'admin-company') {
+            if (auth()->user()->role->name == 'admin' ||
+                auth()->user()->tokenCan('crud_admin_company')) {
+                $scopes = ['crud_recruiters','crud_candidates'];
+                return $this->store($attributes,$scopes);
+            }
+        }
 
-        $token = $user->createToken('hiring-app')->accessToken;
+        if (request('role') == 'recruiter') {
+            if (auth()->user()->role->name == 'admin' ||
+                auth()->user()->tokenCan('crud_recruiters')) {
+                $scopes = ['crud_candidates'];
+                return $this->store($attributes,$scopes);
+            }
+        }
 
-        $response = [
+        if (request('role') == 'candidate') {
+            $attributes['company_id'] = null;
+            $scopes = ['crud_recruiters','crud_candidates'];
+            return $this->store($attributes,$scopes);
+        }
+
+        return response(['message' => 'Forbidden'], 403);
+    }
+
+
+    public function store($attributes,array $scopes)
+    {
+        $role = Role::where('name', '=', $attributes['role'])->first();
+        $attributes['password'] = Hash::make($attributes['password']);
+        unset($attributes['role']);
+        $attributes['role_id'] = $role->id;
+        $user = User::create($attributes);
+
+        $token = $user->createToken('hiring-app',$scopes)->accessToken;
+
+        return response([
             'user' => $user,
             'token' => $token
-        ];
-
-        return response($response,201);
+        ],201);
     }
 
     public function login(Request $request)
@@ -54,9 +76,8 @@ class RegisterController extends Controller
         ]);
 
 
-        if(Auth::attempt($attributes)){
-
-            $user = User::where('email','=',$attributes['email'])->first();
+        if (Auth::attempt($attributes)) {
+            $user = User::where('email', '=', $attributes['email'])->first();
 
             $token = $user->createToken('hiring-app')->accessToken;
 
@@ -64,7 +85,7 @@ class RegisterController extends Controller
                 'token' => $token
             ];
 
-            return response($response,201);
+            return response($response, 201);
         }
     }
 
@@ -74,5 +95,6 @@ class RegisterController extends Controller
 
         return response('Logged out');
     }
+
 
 }

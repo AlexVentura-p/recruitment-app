@@ -25,6 +25,12 @@ class CandidateController extends Controller
 
         $attributes = $request->validated();
 
+        if (auth()->user()->company_id ?? false) {
+            if (auth()->user()->company_id != $attributes['company_id']) {
+                return response(['message' => 'Forbidden'], 403);
+            }
+        }
+
         return CandidateResource::make(
             Candidate::create($attributes)
         );
@@ -32,6 +38,9 @@ class CandidateController extends Controller
 
     public function show(Candidate $candidate)
     {
+        if (auth()->user()->company_id != $candidate->company_id) {
+            return response(['message' => 'Forbidden'], 403);
+        }
         return CandidateResource::make($candidate);
     }
 
