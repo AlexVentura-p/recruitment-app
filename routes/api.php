@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\CandidateManagerController;
+use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\JobOpeningController;
 use App\Http\Controllers\Api\StagesController;
 use Illuminate\Http\Request;
@@ -20,27 +20,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:api','checkRole:admin' ])->group(function (){
+    Route::apiResource('admin/companies',CompanyController::class);
 });
 
-Route::middleware('auth:api')->group(function (){
-    Route::apiResource('admin/companies',CompanyController::class);
+Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group(function (){
     Route::apiResource('admin/job-openings',JobOpeningController::class);
-    Route::apiResource('candidates',CandidateController::class);
-    Route::post('stages',[StagesController::class,'store']);
-    Route::get('stages',[StagesController::class,'index']);
-    Route::patch('job-applications/accept/{candidate}',[CandidateManagerController::class,'accept']);
-    Route::patch('job-applications/reject/{candidate}',[CandidateManagerController::class,'reject']);
-    Route::patch('job-applications/hire/{candidate}',[CandidateManagerController::class,'hire']);
+    Route::apiResource('stages',StagesController::class,);
+    Route::get('candidates',[CandidateController::class,'index']);
+    Route::get('candidates/{candidate}',[CandidateController::class,'show']);
+    Route::delete('candidates/{candidate}',[CandidateController::class,'destroy']);
+    Route::patch('candidates/accept/{candidate}',[CandidateManagerController::class,'accept']);
+    Route::patch('candidates/reject/{candidate}',[CandidateManagerController::class,'reject']);
+    Route::patch('candidates/hire/{candidate}',[CandidateManagerController::class,'hire']);
     Route::post('candidate/stage',[CandidateManagerController::class,'changeStage']);
     Route::get('candidate/status/{candidate}',[CandidateManagerController::class,'showStatus']);
+    Route::post('register',[RegisterController::class,'register']);
 });
 
+Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate'])->group(function (){
+    Route::post('candidates',[CandidateController::class,'store']);
+});
+
+Route::get('job-openings/{job_opening}',[JobOpeningController::class,'show']);
 Route::get('job-openings',[JobOpeningController::class,'index']);
+Route::post('registerCandidate',[RegisterController::class,'registerCandidate']);
 
-
-Route::post('admin/register',[RegisterController::class,'admin']);
-Route::post('company-admin/register',[RegisterController::class,'company']);
-
-Route::post('admin/login',[RegisterController::class,'login']);
+Route::post('login',[RegisterController::class,'login']);

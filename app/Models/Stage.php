@@ -17,4 +17,9 @@ class Stage extends Model
     {
         return $this->hasMany(Candidate::class);
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

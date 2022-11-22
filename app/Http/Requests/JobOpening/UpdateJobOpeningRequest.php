@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Candidate;
+namespace App\Http\Requests\JobOpening;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreCandidateRequest extends FormRequest
+class UpdateJobOpeningRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,11 @@ class StoreCandidateRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
-            'job_opening_id' => [
-                'required',
-                Rule::exists('job_openings', 'id'),
-                'unique:candidates,job_opening_id,NULL,NULL,user_id,' . auth()->user()->id]
-
+            'company_id' => ['required',Rule::exists('companies','id')],
+            'position' => ['required'],
+            'description' => ['required'],
+            'deadline' => ['required']
         ];
     }
 }

@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\StoreCompanyRequest;
 use App\Http\Requests\Company\UpdateCompanyRequest;
 use App\Models\Company;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {

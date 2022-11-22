@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Passport::tokensCan([
+            'crud-admin-crud_admin_company' => 'manage admin company users',
+            'crud_recruiters' => 'manage recruiters users',
+            'crud_candidates' => 'manage candidate users'
+        ]);
     }
 }

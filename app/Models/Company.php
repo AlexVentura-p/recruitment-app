@@ -20,4 +20,9 @@ class Company extends Model
     {
         return $this->hasMany(JobOpening::class);
     }
+
+    public function stages(): HasMany
+    {
+        return $this->hasMany(Stage::class);
+    }
 }
