@@ -32,20 +32,6 @@ class Candidate extends Model
         $this->status = 'Hired';
     }
 
-    public function setStage(string $stage_name, int $company_id)
-    {
-        $stage = Stage::where('name', '=', $stage_name)
-            ->where('company_id', '=', $company_id)->first();
-
-        if ($stage ?? false) {
-            $this->stage_id = $stage->id;
-            $this->update();
-            return $stage;
-        }
-
-        throw new InvalidArgumentException('Unregistered stage');
-    }
-
     public function job_opening() : BelongsTo
     {
         return $this->belongsTo(JobOpening::class);

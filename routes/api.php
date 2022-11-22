@@ -26,9 +26,7 @@ Route::middleware(['auth:api','checkRole:admin' ])->group(function (){
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group(function (){
     Route::apiResource('admin/job-openings',JobOpeningController::class);
-    Route::post('stages',[StagesController::class,'store']);
-    Route::get('stages',[StagesController::class,'index']);
-    //Route::apiResource('candidates',CandidateController::class)->except(['store']);
+    Route::apiResource('stages',StagesController::class,);
     Route::get('candidates',[CandidateController::class,'index']);
     Route::get('candidates/{candidate}',[CandidateController::class,'show']);
     Route::delete('candidates/{candidate}',[CandidateController::class,'destroy']);

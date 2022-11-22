@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Candidate\ChangeStageRequest;
-use App\Http\Resources\CandidateCollection;
 use App\Http\Resources\CandidateResource;
 use App\Http\Services\Auth\AuthCandidateModification;
 use App\Http\Services\Auth\AuthCompanyModification;
 use App\Http\Services\Auth\ChangeValidator;
 use App\Models\Candidate;
+use App\Models\Stage;
 
 class CandidateManagerController extends Controller
 {
@@ -55,15 +55,23 @@ class CandidateManagerController extends Controller
     {
         $attributes = $request->validated();
 
-        $candidate = Candidate::find($attributes['candidate_id'])->first();
+        $candidate = Candidate::find($attributes['candidate_id']);
 
         if(!$this->changeValidator->validate($candidate->job_opening->company)){
             return response(['message' => 'Forbidden'], 403);
         }
 
-        $candidate->setStage($attributes['stage'],$attributes['company_id']);
+        $stage = Stage::where('name', '=', $attributes['stage'])
+            ->where('company_id', '=', $candidate->job_opening->company->id)->first();
 
-        return CandidateResource::make($candidate);
+        if ($stage ?? false) {
+            $candidate->stage_id = $stage->id;
+            $candidate->update();
+            return CandidateResource::make($candidate);
+        }
+
+        return response(['message' => 'Unregistered stage']);
+
     }
 
     public function showStatus(Candidate $candidate)

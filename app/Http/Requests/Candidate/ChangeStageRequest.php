@@ -26,8 +26,7 @@ class ChangeStageRequest extends FormRequest
     {
         return [
             'candidate_id' => ['required', Rule::exists('candidates', 'id')],
-            'stage' => ['required', Rule::exists('stages', 'name')],
-            'company_id' => ['required', Rule::exists('companies', 'id')]
+            'stage' => ['required', Rule::exists('stages', 'name')]
         ];
     }
 }

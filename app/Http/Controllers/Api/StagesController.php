@@ -8,6 +8,7 @@ use App\Http\Services\Auth\ChangeValidator;
 use App\Models\Company;
 use App\Models\Stage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class StagesController extends Controller
 {
@@ -25,22 +26,21 @@ class StagesController extends Controller
     public function index()
     {
         $attributes = request()->validate([
-            'company_id' => ['required']
+            'company_id' => ['required',Rule::exists('companies','id')]
         ]);
 
-        $company = Company::find($attributes['company_id'])->first();
+        $company = Company::find($attributes['company_id']);
 
         if(!$this->changeValidator->validate($company)){
             return response(['message' => 'Forbidden'], 403);
         }
 
         return response(
-            Stage::all()
-                ->where(
+            Stage::where(
                     'company_id',
                     '=',
                     request('company_id')
-                )
+                )->get()
         );
     }
 
@@ -57,7 +57,7 @@ class StagesController extends Controller
             'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
         ]);
 
-        $company = Company::find($attributes['company_id'])->first();
+        $company = Company::find($attributes['company_id']);
 
         if(!$this->changeValidator->validate($company)){
             return response(['message' => 'Forbidden'], 403);
@@ -75,9 +75,23 @@ class StagesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Stage $stage)
     {
-        //
+        $attributes = $request->validate([
+            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
+            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
+        ]);
+
+        if(!$this->changeValidator->validate($stage->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
+        if($attributes['company_id'] != $stage->company->id){
+            return response(['message' => 'Forbidden'], 403);
+        }
+        $stage->update($attributes);
+
+        return response($stage);
     }
 
     /**
@@ -86,9 +100,14 @@ class StagesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Stage $stage)
     {
-        //
+        if(!$this->changeValidator->validate($stage->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
+
+        $stage->delete();
+        return response('No content',204);
     }
 
 }
