@@ -16,26 +16,23 @@ class RegisterController extends Controller
     public function register(StoreUserRequest $request)
     {
         $attributes = $request->validated();
+        $scopes = $this->getScopes(request('role'));
 
-        if (request('role') == 'admin') {
-            if (auth()->user()->role->name == 'admin') {
-                $attributes['company_id'] = null;
-                return $this->store($attributes,[]);
-            }
-        }
+//        if (request('role') == 'admin') {
+//            if (auth()->user()->role->name == 'admin') {
+//                $attributes['company_id'] = null;
+//                return $this->store($attributes,$scopes);
+//            }
+//        }
 
         if (request('role') == 'admin-company') {
-            if (auth()->user()->role->name == 'admin' ||
-                auth()->user()->tokenCan('crud_admin_company')) {
-                $scopes = ['crud_recruiters','crud_candidates'];
+            if (auth()->user()->tokenCan('crud_admin_company')) {
                 return $this->store($attributes,$scopes);
             }
         }
 
         if (request('role') == 'recruiter') {
-            if (auth()->user()->role->name == 'admin' ||
-                auth()->user()->tokenCan('crud_recruiters')) {
-                $scopes = ['crud_candidates'];
+            if (auth()->user()->tokenCan('crud_recruiters')) {
                 return $this->store($attributes,$scopes);
             }
         }
@@ -51,6 +48,8 @@ class RegisterController extends Controller
             $attributes['company_id'] = null;
             return $this->store($attributes,[]);
         }
+
+        return response(['message' => 'Endpoint for candidate users creation only']);
     }
 
 
@@ -77,18 +76,17 @@ class RegisterController extends Controller
             'password' => ['required']
         ]);
 
-
         if (Auth::attempt($attributes)) {
             $user = User::where('email', '=', $attributes['email'])->first();
+            $scopes = $this->getScopes($user->role->name);
+            $token = $user->createToken('hiring-app',$scopes)->accessToken;
 
-            $token = $user->createToken('hiring-app')->accessToken;
-
-            $response = [
+            return response([
                 'token' => $token
-            ];
-
-            return response($response, 201);
+            ], 201);
         }
+
+        return response(['message' => 'Unauthenticated'],401);
     }
 
     public function logout()
@@ -98,5 +96,21 @@ class RegisterController extends Controller
         return response('Logged out');
     }
 
+    public function getScopes(string $role) : array
+    {
+        if ($role == 'admin') {
+            return ['crud_admin_company','crud_recruiters','crud_candidates'];
+        }
+
+        if ($role == 'admin-company') {
+            return ['crud_recruiters','crud_candidates'];
+        }
+
+        if ($role == 'recruiter') {
+            return ['crud_candidates'];
+        }
+
+        return [];
+    }
 
 }

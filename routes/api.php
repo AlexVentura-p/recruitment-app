@@ -36,6 +36,7 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group
     Route::post('candidate/stage',[CandidateManagerController::class,'changeStage']);
     Route::get('candidate/status/{candidate}',[CandidateManagerController::class,'showStatus']);
     Route::post('register',[RegisterController::class,'register']);
+    Route::post('logout',[RegisterController::class,'logout']);
     Route::get('acceptanceEmail/{candidate}',[MailController::class,'sendAcceptanceEmail']);
 });
 
