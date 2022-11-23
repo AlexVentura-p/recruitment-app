@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Candidate;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Candidate\StoreCandidateRequest;
 use App\Http\Resources\CandidateCollection;
 use App\Http\Resources\CandidateResource;
-use App\Http\Services\Auth\AuthCompanyModification;
-use App\Http\Services\Auth\ChangeValidator;
+use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Candidate;
 use App\Models\JobOpening;
 
 class CandidateController extends Controller
 {
-    private ChangeValidator $changeValidator;
+    private CompanyAuth $changeValidator;
 
-    public function __construct()
+    public function __construct(CompanyAuth $companyAuth)
     {
-        $this->changeValidator = new AuthCompanyModification();
+        $this->changeValidator = $companyAuth;
     }
 
     public function index()

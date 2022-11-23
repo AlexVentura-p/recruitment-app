@@ -16,6 +16,7 @@ class CandidateResource extends JsonResource
     {
         $user = $this->user;
         $stage = $this->stage;
+
         if($stage != null){
             $stage = $stage->name;
         }
@@ -27,6 +28,7 @@ class CandidateResource extends JsonResource
             'user id' => $user->id,
             'user first name' => $user->first_name,
             'user last name' => $user->last_name,
+            'user email' => $user->email,
             'stage' => $stage,
             'status' => $this->status
         ];

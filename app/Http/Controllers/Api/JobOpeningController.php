@@ -7,8 +7,8 @@ use App\Http\Requests\JobOpening\StoreJobOpeningRequest;
 use App\Http\Requests\JobOpening\UpdateJobOpeningRequest;
 use App\Http\Resources\JobOpeningCollection;
 use App\Http\Resources\JobOpeningResource;
-use App\Http\Services\Auth\AuthCompanyModification;
-use App\Http\Services\Auth\ChangeValidator;
+use App\Http\Services\Auth\BasicCompanyAuthorization;
+use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Company;
 use App\Models\JobOpening;
 use Illuminate\Http\Request;
@@ -16,11 +16,11 @@ use Illuminate\Validation\Rule;
 
 class JobOpeningController extends Controller
 {
-    private ChangeValidator $changeValidator;
+    private CompanyAuth $changeValidator;
 
-    public function __construct()
+    public function __construct(CompanyAuth $companyAuth)
     {
-        $this->changeValidator = new AuthCompanyModification();
+        $this->changeValidator = $companyAuth;
     }
     /**
      * Display a listing of company by name.

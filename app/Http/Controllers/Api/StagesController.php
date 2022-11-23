@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Services\Auth\AuthCompanyModification;
-use App\Http\Services\Auth\ChangeValidator;
+use App\Http\Services\Auth\BasicCompanyAuthorization;
+use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Company;
 use App\Models\Stage;
 use Illuminate\Http\Request;
@@ -12,11 +12,11 @@ use Illuminate\Validation\Rule;
 
 class StagesController extends Controller
 {
-    private ChangeValidator $changeValidator;
+    private CompanyAuth $changeValidator;
 
-    public function __construct()
+    public function __construct(CompanyAuth $companyAuth)
     {
-        $this->changeValidator = new AuthCompanyModification();
+        $this->changeValidator = $companyAuth;
     }
     /**
      * Display a listing of the resource.

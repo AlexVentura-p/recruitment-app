@@ -4,7 +4,7 @@ namespace App\Http\Services\Auth;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface ChangeValidator
+interface CompanyAuth
 {
     public function validate(Model $model);
 }

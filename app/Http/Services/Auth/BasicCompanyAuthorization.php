@@ -5,7 +5,7 @@ namespace App\Http\Services\Auth;
 use App\Models\Company;
 use Illuminate\Database\Eloquent\Model;
 
-class AuthCompanyModification implements ChangeValidator
+class BasicCompanyAuthorization implements CompanyAuth
 {
     public function validate(Model $company) : bool
     {
