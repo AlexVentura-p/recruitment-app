@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\JobOpening;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,12 +20,13 @@ class JobApplicationTest extends TestCase
      */
     public function test_new_job_application_can_be_created()
     {
-        Passport::actingAs(User::factory()->create());
+        Role::factory()->create(['name' => 'candidate']);
+        Passport::actingAs(User::factory()->create(['role_id' => 1]));
         $jobOpening = JobOpening::factory()->create();
-        $response = $this->postJson('api/job-openings/apply',[
+        $response = $this->postJson('api/candidates',[
             'job_opening_id' => $jobOpening->id
         ]);
-        $response->dd();
-        $response->assertStatus(200);
+
+        $response->assertStatus(201);
     }
 }
