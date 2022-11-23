@@ -3,6 +3,7 @@
 namespace Company;
 
 use App\Models\Company;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -38,11 +39,11 @@ class CompanyTest extends TestCase
 
     public function test_company_is_deleted()
     {
-
-        Passport::actingAs(User::factory()->create());
+        Role::factory()->create(['name' => 'admin']);
+        Passport::actingAs(User::factory()->create(['role_id' => 1]));
         $company = Company::factory()->create();
 
-        $this->deleteJson('api/admin/companies/'.$company->name);
+        $response = $this->deleteJson('api/admin/companies/'.$company->name);
 
         $this->assertDatabaseMissing('companies', [
             'name' => $company->name,
@@ -51,7 +52,8 @@ class CompanyTest extends TestCase
 
     public function test_company_is_updated()
     {
-        Passport::actingAs(User::factory()->create());
+        Role::factory()->create(['name' => 'admin']);
+        Passport::actingAs(User::factory()->create(['role_id' => 1]));
 
         $company = Company::factory()->create([
             'name' => 'original',
@@ -66,7 +68,6 @@ class CompanyTest extends TestCase
             $newAttributes
         );
 
-        dd($response);
 
         $updatedCompany = Company::find($company->id)->first();
 
