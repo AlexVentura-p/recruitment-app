@@ -18,13 +18,6 @@ class RegisterController extends Controller
         $attributes = $request->validated();
         $scopes = $this->getScopes(request('role'));
 
-//        if (request('role') == 'admin') {
-//            if (auth()->user()->role->name == 'admin') {
-//                $attributes['company_id'] = null;
-//                return $this->store($attributes,$scopes);
-//            }
-//        }
-
         if (request('role') == 'admin-company') {
             if (auth()->user()->tokenCan('crud_admin_company')) {
                 return $this->store($attributes,$scopes);

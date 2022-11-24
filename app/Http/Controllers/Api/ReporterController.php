@@ -10,7 +10,6 @@ use App\Models\Candidate;
 use App\Models\Company;
 use App\Models\Stage;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 
 class ReporterController extends Controller
 {
