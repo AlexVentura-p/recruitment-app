@@ -43,6 +43,12 @@ class CreateAdmin extends Command
         $first_name = $this->ask('Enter first name');
         $last_name = $this->ask('Enter last name');
         $email = $this->ask('Enter email');
+
+        if (User::where('email', '=', $email)->count() > 0) {
+            $this->info('Email already taken. Execute again and try another email.');
+            return 0;
+        }
+
         $password = $this->secret('Enter new password');
         $role = Role::where('name','=','admin')->first();
 
@@ -54,8 +60,6 @@ class CreateAdmin extends Command
                 'password' => Hash::make($password),
                 'role_id' => $role->id
             ]);
-            $scopes = ['crud_admin_company', 'crud_recruiters', 'crud_candidates'];
-            $token = $user->createToken('hiring-app', $scopes)->accessToken;
             $this->info('New user admin created!!');
         }
 
