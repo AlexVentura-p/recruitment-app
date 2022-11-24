@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Candidate\CandidateManagerController;
 use App\Http\Controllers\Api\Company\CompanyController;
 use App\Http\Controllers\Api\JobOpeningController;
 use App\Http\Controllers\Api\MailController;
+use App\Http\Controllers\Api\ReporterController;
 use App\Http\Controllers\Api\StagesController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,10 @@ Route::middleware(['auth:api','checkRole:admin' ])->group(function (){
     Route::apiResource('admin/companies',CompanyController::class);
 });
 
+Route::middleware(['auth:api','checkRole:admin,admin-company' ])->group(function (){
+    Route::get('reports/candidates/stage',[ReporterController::class,'stage']);
+});
+
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group(function (){
     Route::apiResource('admin/job-openings',JobOpeningController::class);
     Route::apiResource('stages',StagesController::class,);
@@ -38,6 +43,7 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group
     Route::post('register',[RegisterController::class,'register']);
     Route::post('logout',[RegisterController::class,'logout']);
     Route::get('acceptanceEmail/{candidate}',[MailController::class,'sendAcceptanceEmail']);
+    Route::get('reports/candidates/dates',[ReporterController::class,'candidates']);
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate'])->group(function (){
@@ -45,7 +51,9 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate
 });
 
 Route::get('job-openings/{job_opening}',[JobOpeningController::class,'show']);
+
 Route::get('job-openings',[JobOpeningController::class,'index']);
+
 Route::post('registerCandidate',[RegisterController::class,'registerCandidate']);
 
 Route::post('login',[RegisterController::class,'login']);
