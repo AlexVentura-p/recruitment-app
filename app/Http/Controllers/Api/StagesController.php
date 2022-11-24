@@ -82,9 +82,6 @@ class StagesController extends Controller
             return response(['message' => 'Forbidden'], 403);
         }
 
-        if($attributes['company_id'] != $stage->company->id){
-            return response(['message' => 'Forbidden'], 403);
-        }
         $stage->update($attributes);
 
         return response($stage);

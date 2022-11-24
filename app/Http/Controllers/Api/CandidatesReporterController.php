@@ -11,7 +11,7 @@ use App\Models\Company;
 use App\Models\Stage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class ReporterController extends Controller
+class CandidatesReporterController extends Controller
 {
     private CompanyAuth $changeValidator;
 
@@ -24,14 +24,12 @@ class ReporterController extends Controller
     {
         $attributes = $request->validated();
 
-        $company = Company::where('id','=',$attributes['company_id'])->first();
-
-        if(!$this->changeValidator->validate($company)){
-            return response(['message' => 'Forbidden'], 403);
-        }
-
         $stage = Stage::where('name','=',$attributes['stage'])
             ->where('company_id','=',$attributes['company_id'])->first();
+
+        if(!$this->changeValidator->validate($stage->company)){
+            return response(['message' => 'Forbidden'], 403);
+        }
 
         $candidates = Candidate::with('job_opening')
             ->with('user')

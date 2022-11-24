@@ -46,7 +46,7 @@ class RegisterController extends Controller
     }
 
 
-    public function store($attributes,array $scopes)
+    private function store($attributes,array $scopes)
     {
         $role = Role::where('name', '=', $attributes['role'])->first();
         $attributes['password'] = Hash::make($attributes['password']);
@@ -89,7 +89,7 @@ class RegisterController extends Controller
         return response('Logged out');
     }
 
-    public function getScopes(string $role) : array
+    private function getScopes(string $role) : array
     {
         if ($role == 'admin') {
             return ['crud_admin_company','crud_recruiters','crud_candidates'];
