@@ -49,7 +49,12 @@
                     <td>{{$candidate->user->last_name}}</td>
                     <td>{{$candidate->user->id}}</td>
                     <td>{{$candidate->user->email}}</td>
-                    <td>{{$candidate->stage->name}}</td>
+                    @if($candidate->stage != null)
+                        <td>{{$candidate->stage->name}}</td>
+                    @else
+                        <td>No stage yet</td>
+                    @endif
+
                     <td>{{$candidate->status}}</td>
                 </tr>
             @endforeach

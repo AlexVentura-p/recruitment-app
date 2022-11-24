@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Reports;
+namespace App\Http\Requests\Stages;
 
-use App\Models\Stage;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StageReportRequest extends FormRequest
+class StageStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +24,8 @@ class StageReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'stage' => ['required','exists:stages,name,company_id,' . request('company_id')],
-            'company_id' => ['required','exists:stages,company_id,name,' . request('stage')]
+            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
+            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
         ];
     }
 }

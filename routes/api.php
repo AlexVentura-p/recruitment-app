@@ -26,7 +26,7 @@ Route::middleware(['auth:api','checkRole:admin' ])->group(function (){
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company' ])->group(function (){
-    Route::get('reports',[ReporterController::class,'stage']);
+    Route::get('reports/candidates/stage',[ReporterController::class,'stage']);
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group(function (){
@@ -43,6 +43,7 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group
     Route::post('register',[RegisterController::class,'register']);
     Route::post('logout',[RegisterController::class,'logout']);
     Route::get('acceptanceEmail/{candidate}',[MailController::class,'sendAcceptanceEmail']);
+    Route::get('reports/candidates/dates',[ReporterController::class,'candidates']);
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate'])->group(function (){

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Stages\StageStoreRequest;
+use App\Http\Requests\Stages\StageUpdateRequest;
 use App\Http\Services\Auth\BasicCompanyAuthorization;
 use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Company;
@@ -50,12 +52,9 @@ class StagesController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StageStoreRequest $request)
     {
-        $attributes = $request->validate([
-            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
-            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
-        ]);
+        $attributes = $request->validated();
 
         $company = Company::find($attributes['company_id']);
 
@@ -75,12 +74,9 @@ class StagesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Stage $stage)
+    public function update(StageUpdateRequest $request, Stage $stage)
     {
-        $attributes = $request->validate([
-            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
-            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
-        ]);
+        $attributes = $request->validated();
 
         if(!$this->changeValidator->validate($stage->company)){
             return response(['message' => 'Forbidden'], 403);
