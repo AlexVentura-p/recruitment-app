@@ -18,13 +18,6 @@ class RegisterController extends Controller
         $attributes = $request->validated();
         $scopes = $this->getScopes(request('role'));
 
-//        if (request('role') == 'admin') {
-//            if (auth()->user()->role->name == 'admin') {
-//                $attributes['company_id'] = null;
-//                return $this->store($attributes,$scopes);
-//            }
-//        }
-
         if (request('role') == 'admin-company') {
             if (auth()->user()->tokenCan('crud_admin_company')) {
                 return $this->store($attributes,$scopes);
@@ -53,7 +46,7 @@ class RegisterController extends Controller
     }
 
 
-    public function store($attributes,array $scopes)
+    private function store($attributes,array $scopes)
     {
         $role = Role::where('name', '=', $attributes['role'])->first();
         $attributes['password'] = Hash::make($attributes['password']);
@@ -96,7 +89,7 @@ class RegisterController extends Controller
         return response('Logged out');
     }
 
-    public function getScopes(string $role) : array
+    private function getScopes(string $role) : array
     {
         if ($role == 'admin') {
             return ['crud_admin_company','crud_recruiters','crud_candidates'];

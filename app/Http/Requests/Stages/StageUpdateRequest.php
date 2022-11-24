@@ -24,8 +24,7 @@ class StageUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
-            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
+            'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')]
         ];
     }
 }
