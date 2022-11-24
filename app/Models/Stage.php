@@ -13,7 +13,7 @@ class Stage extends Model
 
     public $timestamps = false;
 
-    public function candidate()
+    public function candidates()
     {
         return $this->hasMany(Candidate::class);
     }
