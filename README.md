@@ -47,9 +47,11 @@ and create api admin level user with the following commands
   php artisan db:seed --class=RoleSeeder
   php artisan make:admin
   ```
-* If needed you can also run default seeder to populate all tables with fake data
+* If needed you can also run default seeder to populate all tables with fake data (personal client will need to be
+  created again)
   ```
   php artisan migrate:fresh --seed
+  php artisan passport:client --personal
   ```
 ## IMAGES USED ON DOCKER CONTAINERS
 
