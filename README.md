@@ -2,35 +2,50 @@
 
 Hiring App is an API made to manage the hire process of companies.
 
-## Deployment with Docker for development environment
+## Deployment
 
-docker-compose -f docker-compose-dev.yml up
-(For production use docker-compose-prod.yml instead)
+* If using docker run docker compose file and access container bash console 
+    
+    docker-compose -f docker-compose-dev.yml up
+    (For production use docker-compose-prod.yml instead)
 
+    Once app container is running open bash in app container
+    docker ps (For container list)
+    docker exec -it [containerId] /bin/bash
 
+* Install composer dependencies
+    composer install
 
-```bash
-pip install foobar
-```
+* Once database is up and ready for connections install migrations and passport (using personal access client) 
+    php artisan migrate:fresh
+    php artisan passport:keys
+    php artisan passport:client --personal
 
-## Usage
+* place client secret and client id on respective env file
+  PASSPORT_PERSONAL_ACCESS_CLIENT_ID=
+  PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=
 
-```python
-import foobar
+* If using docker compose for production allow permission for logs and framework folder
+  chown -R www-data:www-data storage/logs
+  chown -R www-data:www-data storage/framework
 
-# returns 'words'
-foobar.pluralize('word')
+* Seed database with basic roles needed on the application (admin,admin-company,recruiter,candidate)
+and create api admin level user with the following commands
 
-# returns 'geese'
-foobar.pluralize('goose')
+  php artisan db:seed --class=RoleSeeder
+  php artisan make:admin
 
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
+* If needed you can also run default seeder to populate all tables with fake data
+  php artisan db:seed
 
-## Contributing
+## IMAGES USED ON DOCKER CONTAINERS
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+* php:8.0.2-fpm
+* nginx:1.19-alpine
+* mysql:8.0
+* mailhog/mailhog:v1.0.1
 
-Please make sure to update tests as appropriate.
+## ADDITIONAL NOTES
+
+Dockerfile for development allows containers to use files in host machine meanwhile 
+the Dockerfile for production file creates a copy of all files and creates a named volume for containers.
