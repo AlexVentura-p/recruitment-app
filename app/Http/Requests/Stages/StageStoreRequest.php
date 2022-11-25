@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Stages;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StageStoreRequest extends FormRequest
 {
@@ -25,7 +26,11 @@ class StageStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'unique:stages,name,NULL,NULL,company_id,' . request('company_id')],
-            'company_id' => ['required', 'unique:stages,company_id,NULL,NULL,name,' . request('name')]
+            'company_id' => [
+                'required',
+                'unique:stages,company_id,NULL,NULL,name,' . request('name'),
+                Rule::exists('companies','id')
+                ]
         ];
     }
 }

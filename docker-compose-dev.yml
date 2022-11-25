@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      args:
+        work-dir: /var/www/
+      context: ./
+      dockerfile: Docker/dev.Dockerfile
+      target: php
+    container_name: hiring-app-dev
+    restart: always
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www/
+    networks:
+      - hiring-dev
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: hiring-nginx-dev
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/
+      - ./Docker/nginx-files:/etc/nginx/conf.d
+    networks:
+      - hiring-dev
+  mysql:
+    image: mysql:8.0
+    container_name: hiring-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql-data-dev:/var/lib/mysql
+    networks:
+      - hiring-dev
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: hiring-mailhog-dev
+    ports:
+      - "${MAIL_PORT}:1025"
+      - "8025:8025"
+    networks:
+      - hiring-dev
+volumes:
+  mysql-data-dev:
+    driver: local
+networks:
+  hiring-dev:
+

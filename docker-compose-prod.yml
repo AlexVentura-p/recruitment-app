@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Docker/prod.Dockerfile
+      target: php-prod
+    container_name: hiring-app-prod
+    env_file:
+      - .env.prod
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - app-data:/var/www
+    networks:
+      - hiring-prod
+  nginx-prod:
+    build:
+      context: ./
+      dockerfile: Docker/prod.Dockerfile
+      target: nginx
+    container_name: hiring-nginx-prod
+    env_file:
+      - .env.prod
+    restart: always
+    working_dir: /var/www
+    ports:
+      - "8080:80"
+    volumes:
+      - app-data:/var/www
+    networks:
+      - hiring-prod
+  mysql:
+    image: mysql:8.0
+    container_name: hiring-mysql-prod
+    env_file:
+      - .env.prod
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql-data-prod:/var/lib/mysql
+    networks:
+      - hiring-prod
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: hiring-mailhog-prod
+    ports:
+      - "${MAIL_PORT}:1025"
+      - "8025:8025"
+    networks:
+      - hiring-prod
+volumes:
+  mysql-data-prod:
+    driver: local
+  app-data:
+    driver: local
+networks:
+  hiring-prod:
+
+
