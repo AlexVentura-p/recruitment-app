@@ -50,6 +50,7 @@ and create api admin level user with the following commands
 ## IMAGES USED ON DOCKER CONTAINERS
 
 * php:8.0.2-fpm
+* composer
 * nginx:1.19-alpine
 * mysql:8.0
 * mailhog/mailhog:v1.0.1
