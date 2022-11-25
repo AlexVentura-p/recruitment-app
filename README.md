@@ -4,6 +4,10 @@ Hiring App is an API made to manage the hire process of companies.
 
 ## Deployment
 
+* Create env respective env files, you can find examples on root folder, this project makes use 
+of .env for development, .env.testing for testing and .env.prod for production
+
+
 * If using docker run docker compose file and access container bash console 
     ```
     docker-compose -f docker-compose-dev.yml up
@@ -31,7 +35,7 @@ Hiring App is an API made to manage the hire process of companies.
   PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=
   ```
 
-* If using docker compose for production allow permission for logs and framework folder
+* If using docker compose for production, you need allow permission for logs and framework folder
   ```
   chown -R www-data:www-data storage/logs
   chown -R www-data:www-data storage/framework
@@ -45,7 +49,7 @@ and create api admin level user with the following commands
   ```
 * If needed you can also run default seeder to populate all tables with fake data
   ```
-  php artisan db:seed
+  php artisan migrate:fresh --seed
   ```
 ## IMAGES USED ON DOCKER CONTAINERS
 
@@ -53,7 +57,18 @@ and create api admin level user with the following commands
 * composer
 * nginx:1.19-alpine
 * mysql:8.0
-* mailhog/mailhog:v1.0.1 for email testing
+docker mysql image uses "mysql" as DB_HOST
+
+* mailhog/mailhog:v1.0.1 for email testing 
+mailhog configuration by using DOCKER: (when not using docker host can be "localhost")
+  MAIL_MAILER=smtp
+  MAIL_HOST=mailhog
+  MAIL_PORT=1025
+  MAIL_USERNAME=null
+  MAIL_PASSWORD=null
+  MAIL_ENCRYPTION=null
+  MAIL_FROM_ADDRESS=hiringapp@dev.com
+  MAIL_FROM_NAME="${APP_NAME}"
 
 ## ADDITIONAL NOTES
 
