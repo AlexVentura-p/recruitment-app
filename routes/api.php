@@ -1,13 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\User\CandidateUserController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Candidate\CandidateController;
 use App\Http\Controllers\Api\Candidate\CandidateManagerController;
+use App\Http\Controllers\Api\Candidate\CandidatesReporterController;
 use App\Http\Controllers\Api\Company\CompanyController;
-use App\Http\Controllers\Api\JobOpeningController;
-use App\Http\Controllers\Api\MailController;
-use App\Http\Controllers\Api\CandidatesReporterController;
-use App\Http\Controllers\Api\StagesController;
+use App\Http\Controllers\Api\JobOpening\JobOpeningController;
+use App\Http\Controllers\Api\Mail\MailController;
+use App\Http\Controllers\Api\Stages\StagesController;
+use App\Http\Controllers\Api\User\CompanyUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,11 +29,14 @@ Route::middleware(['auth:api','checkRole:admin' ])->group(function (){
 
 Route::middleware(['auth:api','checkRole:admin,admin-company' ])->group(function (){
     Route::get('reports/candidates/stage',[CandidatesReporterController::class,'stage']);
+    Route::apiResource('users',CompanyUserController::class);
 });
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group(function (){
+
     Route::apiResource('admin/job-openings',JobOpeningController::class);
     Route::apiResource('stages',StagesController::class,);
+
     Route::get('candidates',[CandidateController::class,'index']);
     Route::get('candidates/{candidate}',[CandidateController::class,'show']);
     Route::delete('candidates/{candidate}',[CandidateController::class,'destroy']);
@@ -44,7 +49,13 @@ Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter'])->group
     Route::post('logout',[RegisterController::class,'logout']);
     Route::get('acceptance-email/{candidate}',[MailController::class,'sendAcceptanceEmail']);
     Route::get('reports/candidates/dates',[CandidatesReporterController::class,'candidates']);
+    Route::get('candidate-users/{user}',[CandidateUserController::class,'show']);
+    Route::get('candidate-users',[CandidateUserController::class,'index']);
+    Route::delete('candidate-users/{user}',[CandidateUserController::class,'destroy']);
+    Route::patch('candidate-users/{user}',[CandidateUserController::class,'update']);
 });
+
+//Route::get('candidates/users',[CandidateUserController::class,'index'])->middleware(['auth:api','checkRole:admin,admin-company,recruiter']);
 
 Route::middleware(['auth:api','checkRole:admin,admin-company,recruiter,candidate'])->group(function (){
     Route::post('candidates',[CandidateController::class,'store']);

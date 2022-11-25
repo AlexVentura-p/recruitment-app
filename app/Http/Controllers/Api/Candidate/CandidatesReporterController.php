@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Candidate;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reports\CandidateDateRequest;

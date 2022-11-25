@@ -26,7 +26,7 @@ class CandidateFactory extends Factory
         return [
             'job_opening_id' => $jobOpening->id,
             'user_id'   => $user->id,
-            'status' => $this->faker->randomElement(['Pending review','Active','Rejected','Hired'])
+            'status' => $this->faker->randomElement(['Pending review'])
         ];
     }
 }

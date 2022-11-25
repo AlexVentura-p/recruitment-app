@@ -33,19 +33,22 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678')
         ]);
 
-        $company = Company::factory(5)->create();
+        $companies = Company::factory(5)->create();
 
         Stage::factory(20)->create();
 
-        $adminCompanyUsers = User::factory(10)->create([
-            'role_id' => $adminCompanyRole->id,
-            'company_id' => $company->random()->id
-        ]);
+        foreach ($companies as $company){
+            User::factory(2)->create([
+                'role_id' => $adminCompanyRole->id,
+                'company_id' => $company->id
+            ]);
 
-        $recruiterCompanyUsers = User::factory(10)->create([
-            'role_id' => $recruiterRole->id,
-            'company_id' => $company->random()->id
-        ]);
+            User::factory(2)->create([
+                'role_id' => $recruiterRole->id,
+                'company_id' => $company->id
+            ]);
+        }
+
 
         Candidate::factory(20)->create();
 

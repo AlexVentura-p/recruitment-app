@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\JobOpening;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JobOpening\StoreJobOpeningRequest;
 use App\Http\Requests\JobOpening\UpdateJobOpeningRequest;
 use App\Http\Resources\JobOpeningCollection;
 use App\Http\Resources\JobOpeningResource;
-use App\Http\Services\Auth\BasicCompanyAuthorization;
 use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Company;
 use App\Models\JobOpening;

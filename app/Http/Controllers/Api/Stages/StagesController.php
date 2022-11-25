@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Stages;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Stages\StageStoreRequest;
 use App\Http\Requests\Stages\StageUpdateRequest;
-use App\Http\Services\Auth\BasicCompanyAuthorization;
 use App\Http\Services\Auth\CompanyAuth;
 use App\Models\Company;
 use App\Models\Stage;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class StagesController extends Controller
