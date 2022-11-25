@@ -14,7 +14,7 @@ class Candidate extends Model
     protected $guarded = [];
 
     protected $attributes = [
-        'status' => 'Pending acceptance'
+        'status' => 'Pending review'
     ];
 
     public function accept()

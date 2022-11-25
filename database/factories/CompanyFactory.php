@@ -15,7 +15,7 @@ class CompanyFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->word,
-            'description' => $this->faker->sentence
+            'description' => $this->faker->paragraph
         ];
     }
 }

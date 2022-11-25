@@ -19,7 +19,7 @@ class CreateJobOpeningsTable extends Migration
                 ->constrained('companies')->onDelete('CASCADE');
             $table->string('position');
             $table->string('description');
-            $table->dateTime('deadline');
+            $table->timestamp('deadline');
             $table->timestamp('created_at')->useCurrent();
         });
     }

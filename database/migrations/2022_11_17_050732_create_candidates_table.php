@@ -22,7 +22,7 @@ class CreateCandidatesTable extends Migration
             $table->foreignId('stage_id')->nullable()
                 ->constrained('stages')->onDelete('SET NULL');
             $table->unique(['job_opening_id','user_id']);
-            $table->string('status')->default('Pending acceptance');
+            $table->string('status')->default('Pending review');
             $table->timestamps();
         });
     }

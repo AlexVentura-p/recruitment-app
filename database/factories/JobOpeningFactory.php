@@ -14,13 +14,13 @@ class JobOpeningFactory extends Factory
      */
     public function definition()
     {
-        $company = Company::factory()->create();
+        $company = Company::all()->random();
         return [
             'company_id' => $company->id,
             'position' => $this->faker->word,
-            'description' => $this->faker->paragraph,
+            'description' => $this->faker->sentence,
             'deadline' => $this->faker
-                ->dateTimeBetween('now','+3 month')->format("Y-M-D H:m:s")
+                ->dateTimeBetween('now','+3 month')
         ];
     }
 }
