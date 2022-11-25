@@ -53,9 +53,11 @@ and create api admin level user with the following commands
 * composer
 * nginx:1.19-alpine
 * mysql:8.0
-* mailhog/mailhog:v1.0.1
+* mailhog/mailhog:v1.0.1 for email testing
 
 ## ADDITIONAL NOTES
+
+*To access to mailhog inbox using mailhog you can use port 8025
 
 Dockerfile for development allows containers to use files in host machine meanwhile 
 the Dockerfile for production file creates a copy of all files and creates a named volume for containers.
