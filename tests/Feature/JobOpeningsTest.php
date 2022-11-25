@@ -25,15 +25,16 @@ class JobOpeningsTest extends TestCase
     {
         Role::factory()->create(['name' => 'admin']);
         Passport::actingAs(User::factory()->create(['role_id' => 1]));
-        $jobOpeningInstance = JobOpening::factory()->make();
-        $attributes = $jobOpeningInstance->getAttributes();
+        $company = Company::factory()->create();
 
-        $attributes['company_name'] = $jobOpeningInstance->company->name;
 
         $response = $this->postJson(
-            'api/admin/job-openings',
-            $attributes
-        );
+            'api/admin/job-openings', [
+                'company_name' => $company->name,
+                'position' => 'manager',
+                'description' => 'best place to work',
+                'deadline' => '2022-11-25'
+            ]);
 
         $this->assertDatabaseHas(
             'job_openings',

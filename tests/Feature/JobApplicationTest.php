@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\JobOpening;
 use App\Models\Role;
 use App\Models\User;
@@ -22,7 +23,10 @@ class JobApplicationTest extends TestCase
     {
         Role::factory()->create(['name' => 'candidate']);
         Passport::actingAs(User::factory()->create(['role_id' => 1]));
-        $jobOpening = JobOpening::factory()->create();
+        $company = Company::factory()->create();
+        $jobOpening = JobOpening::factory()->create([
+            'company_id' => $company->id
+        ]);
         $response = $this->postJson('api/candidates',[
             'job_opening_id' => $jobOpening->id
         ]);

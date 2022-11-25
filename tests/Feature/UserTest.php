@@ -24,6 +24,7 @@ class UserTest extends TestCase
         Role::factory()->create(['name' => 'admin-company']);
         Role::factory()->create(['name' => 'recruiter']);
         Role::factory()->create(['name' => 'candidate']);
+        $this->artisan('passport:install');
     }
 
     /**
@@ -34,17 +35,14 @@ class UserTest extends TestCase
     public function test_create_user()
     {
         $roleAdmin = Role::where('name','=','admin')->first();
-
-        Passport::actingAs(User::factory()->create([
+        $user = User::factory()->create([
             'role_id' => $roleAdmin->id
-        ]));
+        ]);
+        Passport::actingAs($user,['crud_recruiters'],'api');
+
         $company = Company::factory()->create();
 
-        $roleRecruiter = Role::where('name','=','recruiter')->first();
-
-        //dd($user->getAttributes());
-
-        $response = $this->postJson('api/admin/register',[
+        $response = $this->postJson('api/register',[
             'first_name' => 'alex',
             'last_name' => 'perez',
             'email' => 'a@gmail.com',
@@ -53,6 +51,6 @@ class UserTest extends TestCase
             'company_id' => $company->id
         ]);
 
-        dd($response);
+        $response->assertStatus(201);
     }
 }
